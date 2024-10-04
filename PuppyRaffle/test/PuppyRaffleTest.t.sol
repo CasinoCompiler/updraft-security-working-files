@@ -4,9 +4,12 @@ pragma experimental ABIEncoderV2;
 
 import {Test, console} from "lib/forge-std/src/Test.sol";
 import {PuppyRaffle} from "../src/PuppyRaffle.sol";
+import {Attack} from "../src/ReentrencyAttack.sol";
 
 contract PuppyRaffleTest is Test {
     PuppyRaffle puppyRaffle;
+    Attack attack;
+
     uint256 entranceFee = 1e18;
     address playerOne = address(1);
     address playerTwo = address(2);
@@ -21,6 +24,8 @@ contract PuppyRaffleTest is Test {
             feeAddress,
             duration
         );
+
+        attack = new Attack(address(puppyRaffle));
     }
 
     //////////////////////
@@ -213,4 +218,36 @@ contract PuppyRaffleTest is Test {
         puppyRaffle.withdrawFees();
         assertEq(address(feeAddress).balance, expectedPrizeAmount);
     }
+
+    /*//////////////////////////////////////////////////////////////
+                               REENTRENCY
+    //////////////////////////////////////////////////////////////*/
+    address alice = makeAddr("alice");
+    address bob = makeAddr("bob");
+
+    function test_RefundReentrency() public {
+
+        // ARGS for entering enterRaffle()
+        address[] memory aliceARG = new address[](1);
+        aliceARG[0] = alice;
+        address[] memory bobARG = new address[](1);
+        bobARG[0] = bob;
+
+        // Fund Alice and bob and make them enter raffle
+        vm.deal(alice, entranceFee * 2);
+        vm.deal(bob, entranceFee * 2);
+        vm.prank(alice);
+        puppyRaffle.enterRaffle{value: entranceFee}(aliceARG);
+        vm.prank(bob);
+        puppyRaffle.enterRaffle{value: entranceFee}(bobARG);
+
+        // Fund attack contract
+        vm.deal(address(attack), 1 ether);
+        attack.attack();
+
+        console.log(address(attack).balance);
+
+        assert(address(attack).balance > 1 ether);
+    }
+
 }
