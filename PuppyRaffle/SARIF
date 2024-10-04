@@ -1,0 +1,719 @@
+{
+  "$schema": "https://raw.githubusercontent.com/oasis-tcs/sarif-spec/master/Schemata/sarif-schema-2.1.0.json",
+  "version": "2.1.0",
+  "runs": [
+    {
+      "tool": {
+        "driver": {
+          "name": "Slither",
+          "informationUri": "https://github.com/crytic/slither",
+          "version": "0.10.0",
+          "rules": [
+            {
+              "id": "0-1-arbitrary-send-eth",
+              "name": "arbitrary-send-eth",
+              "properties": {
+                "precision": "high",
+                "security-severity": "8.0"
+              },
+              "shortDescription": {
+                "text": "Functions that send Ether to arbitrary destinations"
+              },
+              "help": {
+                "text": "Ensure that an arbitrary user cannot withdraw unauthorized funds."
+              }
+            },
+            {
+              "id": "0-1-weak-prng",
+              "name": "weak-prng",
+              "properties": {
+                "precision": "high",
+                "security-severity": "8.0"
+              },
+              "shortDescription": {
+                "text": "Weak PRNG"
+              },
+              "help": {
+                "text": "Do not use `block.timestamp`, `now` or `blockhash` as a source of randomness"
+              }
+            },
+            {
+              "id": "1-0-incorrect-equality",
+              "name": "incorrect-equality",
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "4.0"
+              },
+              "shortDescription": {
+                "text": "Dangerous strict equalities"
+              },
+              "help": {
+                "text": "Don't use strict equality to determine if an account has enough Ether or tokens."
+              }
+            },
+            {
+              "id": "1-1-reentrancy-no-eth",
+              "name": "reentrancy-no-eth",
+              "properties": {
+                "precision": "high",
+                "security-severity": "4.0"
+              },
+              "shortDescription": {
+                "text": "Reentrancy vulnerabilities"
+              },
+              "help": {
+                "text": "Apply the [`check-effects-interactions` pattern](http://solidity.readthedocs.io/en/v0.4.21/security-considerations.html#re-entrancy)."
+              }
+            },
+            {
+              "id": "2-1-missing-zero-check",
+              "name": "missing-zero-check",
+              "properties": {
+                "precision": "high",
+                "security-severity": "3.0"
+              },
+              "shortDescription": {
+                "text": "Missing zero address validation"
+              },
+              "help": {
+                "text": "Check that the address is not zero."
+              }
+            },
+            {
+              "id": "2-1-reentrancy-events",
+              "name": "reentrancy-events",
+              "properties": {
+                "precision": "high",
+                "security-severity": "3.0"
+              },
+              "shortDescription": {
+                "text": "Reentrancy vulnerabilities"
+              },
+              "help": {
+                "text": "Apply the [`check-effects-interactions` pattern](https://docs.soliditylang.org/en/latest/security-considerations.html#re-entrancy)."
+              }
+            },
+            {
+              "id": "2-1-timestamp",
+              "name": "timestamp",
+              "properties": {
+                "precision": "high",
+                "security-severity": "3.0"
+              },
+              "shortDescription": {
+                "text": "Block timestamp"
+              },
+              "help": {
+                "text": "Avoid relying on `block.timestamp`."
+              }
+            },
+            {
+              "id": "3-0-pragma",
+              "name": "pragma",
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "0.0"
+              },
+              "shortDescription": {
+                "text": "Different pragma directives are used"
+              },
+              "help": {
+                "text": "Use one Solidity version."
+              }
+            },
+            {
+              "id": "3-1-dead-code",
+              "name": "dead-code",
+              "properties": {
+                "precision": "high",
+                "security-severity": "0.0"
+              },
+              "shortDescription": {
+                "text": "Dead-code"
+              },
+              "help": {
+                "text": "Remove unused functions."
+              }
+            },
+            {
+              "id": "3-0-solc-version",
+              "name": "solc-version",
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "0.0"
+              },
+              "shortDescription": {
+                "text": "Incorrect versions of Solidity"
+              },
+              "help": {
+                "text": "\nDeploy with any of the following Solidity versions:\n- 0.8.18\n\nThe recommendations take into account:\n- Risks related to recent releases\n- Risks of complex code generation changes\n- Risks of new language features\n- Risks of known bugs\n\nUse a simple pragma version that allows any of these versions.\nConsider using the latest version of Solidity for testing."
+              }
+            },
+            {
+              "id": "3-0-low-level-calls",
+              "name": "low-level-calls",
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "0.0"
+              },
+              "shortDescription": {
+                "text": "Low-level calls"
+              },
+              "help": {
+                "text": "Avoid low-level calls. Check the call success. If the call is meant for a contract, check for code existence."
+              }
+            },
+            {
+              "id": "4-0-cache-array-length",
+              "name": "cache-array-length",
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "0.0"
+              },
+              "shortDescription": {
+                "text": "Cache array length"
+              },
+              "help": {
+                "text": "Cache the lengths of storage arrays if they are used and not modified in `for` loops."
+              }
+            },
+            {
+              "id": "4-0-constable-states",
+              "name": "constable-states",
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "0.0"
+              },
+              "shortDescription": {
+                "text": "State variables that could be declared constant"
+              },
+              "help": {
+                "text": "Add the `constant` attribute to state variables that never change."
+              }
+            },
+            {
+              "id": "4-0-immutable-states",
+              "name": "immutable-states",
+              "properties": {
+                "precision": "very-high",
+                "security-severity": "0.0"
+              },
+              "shortDescription": {
+                "text": "State variables that could be declared immutable"
+              },
+              "help": {
+                "text": "Add the `immutable` attribute to state variables that never change or are set only in the constructor."
+              }
+            }
+          ]
+        }
+      },
+      "results": [
+        {
+          "ruleId": "0-1-arbitrary-send-eth",
+          "message": {
+            "text": "PuppyRaffle.withdrawFees() (src/PuppyRaffle.sol#165-171) sends eth to arbitrary user\n\tDangerous calls:\n\t- (success) = feeAddress.call{value: feesToWithdraw}() (src/PuppyRaffle.sol#169)\n",
+            "markdown": "[PuppyRaffle.withdrawFees()](src/PuppyRaffle.sol#L165-L171) sends eth to arbitrary user\n\tDangerous calls:\n\t- [(success) = feeAddress.call{value: feesToWithdraw}()](src/PuppyRaffle.sol#L169)\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 165,
+                  "endLine": 171
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "e26e91c01d5ba5fa566db0ab26fe7ad4d309d778f8e1303fcfa90bad215280e1"
+          }
+        },
+        {
+          "ruleId": "0-1-weak-prng",
+          "message": {
+            "text": "PuppyRaffle.selectWinner() (src/PuppyRaffle.sol#133-162) uses a weak PRNG: \"winnerIndex = uint256(keccak256(bytes)(abi.encodePacked(msg.sender,block.timestamp,block.difficulty))) % players.length (src/PuppyRaffle.sol#136-137)\" \n",
+            "markdown": "[PuppyRaffle.selectWinner()](src/PuppyRaffle.sol#L133-L162) uses a weak PRNG: \"[winnerIndex = uint256(keccak256(bytes)(abi.encodePacked(msg.sender,block.timestamp,block.difficulty))) % players.length](src/PuppyRaffle.sol#L136-L137)\" \n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 133,
+                  "endLine": 162
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "078ea9b8fa9fa6375bcc75283f4eac2418a7f8ed5661363b57a59d7dd4659d82"
+          }
+        },
+        {
+          "ruleId": "1-0-incorrect-equality",
+          "message": {
+            "text": "PuppyRaffle.withdrawFees() (src/PuppyRaffle.sol#165-171) uses a dangerous strict equality:\n\t- require(bool,string)(address(this).balance == uint256(totalFees),PuppyRaffle: There are currently players active!) (src/PuppyRaffle.sol#166)\n",
+            "markdown": "[PuppyRaffle.withdrawFees()](src/PuppyRaffle.sol#L165-L171) uses a dangerous strict equality:\n\t- [require(bool,string)(address(this).balance == uint256(totalFees),PuppyRaffle: There are currently players active!)](src/PuppyRaffle.sol#L166)\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 165,
+                  "endLine": 171
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "d4408ee578fc350aae74902367fc1b2a685b48f6eeae3e852839cbde2df04cbd"
+          }
+        },
+        {
+          "ruleId": "1-1-reentrancy-no-eth",
+          "message": {
+            "text": "Reentrancy in PuppyRaffle.refund(uint256) (src/PuppyRaffle.sol#116-125):\n\tExternal calls:\n\t- address(msg.sender).sendValue(entranceFee) (src/PuppyRaffle.sol#121)\n\tState variables written after the call(s):\n\t- players[playerIndex] = address(0) (src/PuppyRaffle.sol#123)\n\tPuppyRaffle.players (src/PuppyRaffle.sol#31) can be used in cross function reentrancies:\n\t- PuppyRaffle.enterRaffle(address[]) (src/PuppyRaffle.sol#99-112)\n\t- PuppyRaffle.getActivePlayerIndex(address) (src/PuppyRaffle.sol#237-244)\n\t- PuppyRaffle.players (src/PuppyRaffle.sol#31)\n\t- PuppyRaffle.refund(uint256) (src/PuppyRaffle.sol#116-125)\n\t- PuppyRaffle.selectWinner() (src/PuppyRaffle.sol#133-162)\n",
+            "markdown": "Reentrancy in [PuppyRaffle.refund(uint256)](src/PuppyRaffle.sol#L116-L125):\n\tExternal calls:\n\t- [address(msg.sender).sendValue(entranceFee)](src/PuppyRaffle.sol#L121)\n\tState variables written after the call(s):\n\t- [players[playerIndex] = address(0)](src/PuppyRaffle.sol#L123)\n\t[PuppyRaffle.players](src/PuppyRaffle.sol#L31) can be used in cross function reentrancies:\n\t- [PuppyRaffle.enterRaffle(address[])](src/PuppyRaffle.sol#L99-L112)\n\t- [PuppyRaffle.getActivePlayerIndex(address)](src/PuppyRaffle.sol#L237-L244)\n\t- [PuppyRaffle.players](src/PuppyRaffle.sol#L31)\n\t- [PuppyRaffle.refund(uint256)](src/PuppyRaffle.sol#L116-L125)\n\t- [PuppyRaffle.selectWinner()](src/PuppyRaffle.sol#L133-L162)\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 116,
+                  "endLine": 125
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "9dd28ba4faba4c18db7842279972b561bdbc2ffafcff0b8bbd55508e16c8f0e4"
+          }
+        },
+        {
+          "ruleId": "2-1-missing-zero-check",
+          "message": {
+            "text": "PuppyRaffle.constructor(uint256,address,uint256)._feeAddress (src/PuppyRaffle.sol#76) lacks a zero-check on :\n\t\t- feeAddress = _feeAddress (src/PuppyRaffle.sol#78)\n",
+            "markdown": "[PuppyRaffle.constructor(uint256,address,uint256)._feeAddress](src/PuppyRaffle.sol#L76) lacks a zero-check on :\n\t\t- [feeAddress = _feeAddress](src/PuppyRaffle.sol#L78)\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 76,
+                  "endLine": 76
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "1757b763c4e2564136c36a2032b714af13e048f3fedb3024efdf2c201a756fb8"
+          }
+        },
+        {
+          "ruleId": "2-1-missing-zero-check",
+          "message": {
+            "text": "PuppyRaffle.changeFeeAddress(address).newFeeAddress (src/PuppyRaffle.sol#175) lacks a zero-check on :\n\t\t- feeAddress = newFeeAddress (src/PuppyRaffle.sol#176)\n",
+            "markdown": "[PuppyRaffle.changeFeeAddress(address).newFeeAddress](src/PuppyRaffle.sol#L175) lacks a zero-check on :\n\t\t- [feeAddress = newFeeAddress](src/PuppyRaffle.sol#L176)\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 175,
+                  "endLine": 175
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "d51512f0137c3dc0e1a689df0893bc4cbf46662274cd70274b68a8c74cdbf9f8"
+          }
+        },
+        {
+          "ruleId": "2-1-reentrancy-events",
+          "message": {
+            "text": "Reentrancy in PuppyRaffle.selectWinner() (src/PuppyRaffle.sol#133-162):\n\tExternal calls:\n\t- (success) = winner.call{value: prizePool}() (src/PuppyRaffle.sol#159)\n\t- _safeMint(winner,tokenId) (src/PuppyRaffle.sol#161)\n\t\t- returndata = to.functionCall(abi.encodeWithSelector(IERC721Receiver(to).onERC721Received.selector,_msgSender(),from,tokenId,_data),ERC721: transfer to non ERC721Receiver implementer) (lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol#441-447)\n\t\t- (success,returndata) = target.call{value: value}(data) (lib/openzeppelin-contracts/contracts/utils/Address.sol#119)\n\tExternal calls sending eth:\n\t- (success) = winner.call{value: prizePool}() (src/PuppyRaffle.sol#159)\n\t- _safeMint(winner,tokenId) (src/PuppyRaffle.sol#161)\n\t\t- (success,returndata) = target.call{value: value}(data) (lib/openzeppelin-contracts/contracts/utils/Address.sol#119)\n\tEvent emitted after the call(s):\n\t- Transfer(address(0),to,tokenId) (lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol#343)\n\t\t- _safeMint(winner,tokenId) (src/PuppyRaffle.sol#161)\n",
+            "markdown": "Reentrancy in [PuppyRaffle.selectWinner()](src/PuppyRaffle.sol#L133-L162):\n\tExternal calls:\n\t- [(success) = winner.call{value: prizePool}()](src/PuppyRaffle.sol#L159)\n\t- [_safeMint(winner,tokenId)](src/PuppyRaffle.sol#L161)\n\t\t- [returndata = to.functionCall(abi.encodeWithSelector(IERC721Receiver(to).onERC721Received.selector,_msgSender(),from,tokenId,_data),ERC721: transfer to non ERC721Receiver implementer)](lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol#L441-L447)\n\t\t- [(success,returndata) = target.call{value: value}(data)](lib/openzeppelin-contracts/contracts/utils/Address.sol#L119)\n\tExternal calls sending eth:\n\t- [(success) = winner.call{value: prizePool}()](src/PuppyRaffle.sol#L159)\n\t- [_safeMint(winner,tokenId)](src/PuppyRaffle.sol#L161)\n\t\t- [(success,returndata) = target.call{value: value}(data)](lib/openzeppelin-contracts/contracts/utils/Address.sol#L119)\n\tEvent emitted after the call(s):\n\t- [Transfer(address(0),to,tokenId)](lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol#L343)\n\t\t- [_safeMint(winner,tokenId)](src/PuppyRaffle.sol#L161)\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 133,
+                  "endLine": 162
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "33d393c49fb4e3a43d2b712d888d7243365cc2415e8b0acf50448f71253d634d"
+          }
+        },
+        {
+          "ruleId": "2-1-reentrancy-events",
+          "message": {
+            "text": "Reentrancy in PuppyRaffle.refund(uint256) (src/PuppyRaffle.sol#116-125):\n\tExternal calls:\n\t- address(msg.sender).sendValue(entranceFee) (src/PuppyRaffle.sol#121)\n\tEvent emitted after the call(s):\n\t- RaffleRefunded(playerAddress) (src/PuppyRaffle.sol#124)\n",
+            "markdown": "Reentrancy in [PuppyRaffle.refund(uint256)](src/PuppyRaffle.sol#L116-L125):\n\tExternal calls:\n\t- [address(msg.sender).sendValue(entranceFee)](src/PuppyRaffle.sol#L121)\n\tEvent emitted after the call(s):\n\t- [RaffleRefunded(playerAddress)](src/PuppyRaffle.sol#L124)\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 116,
+                  "endLine": 125
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "c14f410f77634f5b8c18cf7a4ed1e776b907de19c54f3da900de1dbc1a3eeeac"
+          }
+        },
+        {
+          "ruleId": "2-1-timestamp",
+          "message": {
+            "text": "PuppyRaffle.selectWinner() (src/PuppyRaffle.sol#133-162) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- require(bool,string)(block.timestamp >= raffleStartTime + raffleDuration,PuppyRaffle: Raffle not over) (src/PuppyRaffle.sol#134)\n",
+            "markdown": "[PuppyRaffle.selectWinner()](src/PuppyRaffle.sol#L133-L162) uses timestamp for comparisons\n\tDangerous comparisons:\n\t- [require(bool,string)(block.timestamp >= raffleStartTime + raffleDuration,PuppyRaffle: Raffle not over)](src/PuppyRaffle.sol#L134)\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 133,
+                  "endLine": 162
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "7d800ed2c77b4e57d17d74c94088bffa3f30df0c181ac74ea894686281826062"
+          }
+        },
+        {
+          "ruleId": "3-0-pragma",
+          "message": {
+            "text": "Different versions of Solidity are used:\n\t- Version used: ['>=0.6.0', '>=0.6.0<0.8.0', '>=0.6.2<0.8.0', '^0.7.6']\n\t- >=0.6.0 (lib/base64/base64.sol#3)\n\t- >=0.6.0<0.8.0 (lib/openzeppelin-contracts/contracts/access/Ownable.sol#3)\n\t- >=0.6.0<0.8.0 (lib/openzeppelin-contracts/contracts/introspection/ERC165.sol#3)\n\t- >=0.6.0<0.8.0 (lib/openzeppelin-contracts/contracts/introspection/IERC165.sol#3)\n\t- >=0.6.0<0.8.0 (lib/openzeppelin-contracts/contracts/math/SafeMath.sol#3)\n\t- >=0.6.0<0.8.0 (lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol#3)\n\t- >=0.6.0<0.8.0 (lib/openzeppelin-contracts/contracts/token/ERC721/IERC721Receiver.sol#3)\n\t- >=0.6.0<0.8.0 (lib/openzeppelin-contracts/contracts/utils/Context.sol#3)\n\t- >=0.6.0<0.8.0 (lib/openzeppelin-contracts/contracts/utils/EnumerableMap.sol#3)\n\t- >=0.6.0<0.8.0 (lib/openzeppelin-contracts/contracts/utils/EnumerableSet.sol#3)\n\t- >=0.6.0<0.8.0 (lib/openzeppelin-contracts/contracts/utils/Strings.sol#3)\n\t- >=0.6.2<0.8.0 (lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol#3)\n\t- >=0.6.2<0.8.0 (lib/openzeppelin-contracts/contracts/token/ERC721/IERC721Enumerable.sol#3)\n\t- >=0.6.2<0.8.0 (lib/openzeppelin-contracts/contracts/token/ERC721/IERC721Metadata.sol#3)\n\t- >=0.6.2<0.8.0 (lib/openzeppelin-contracts/contracts/utils/Address.sol#3)\n\t- ^0.7.6 (src/PuppyRaffle.sol#2)\n",
+            "markdown": "Different versions of Solidity are used:\n\t- Version used: ['>=0.6.0', '>=0.6.0<0.8.0', '>=0.6.2<0.8.0', '^0.7.6']\n\t- [>=0.6.0](lib/base64/base64.sol#L3)\n\t- [>=0.6.0<0.8.0](lib/openzeppelin-contracts/contracts/access/Ownable.sol#L3)\n\t- [>=0.6.0<0.8.0](lib/openzeppelin-contracts/contracts/introspection/ERC165.sol#L3)\n\t- [>=0.6.0<0.8.0](lib/openzeppelin-contracts/contracts/introspection/IERC165.sol#L3)\n\t- [>=0.6.0<0.8.0](lib/openzeppelin-contracts/contracts/math/SafeMath.sol#L3)\n\t- [>=0.6.0<0.8.0](lib/openzeppelin-contracts/contracts/token/ERC721/ERC721.sol#L3)\n\t- [>=0.6.0<0.8.0](lib/openzeppelin-contracts/contracts/token/ERC721/IERC721Receiver.sol#L3)\n\t- [>=0.6.0<0.8.0](lib/openzeppelin-contracts/contracts/utils/Context.sol#L3)\n\t- [>=0.6.0<0.8.0](lib/openzeppelin-contracts/contracts/utils/EnumerableMap.sol#L3)\n\t- [>=0.6.0<0.8.0](lib/openzeppelin-contracts/contracts/utils/EnumerableSet.sol#L3)\n\t- [>=0.6.0<0.8.0](lib/openzeppelin-contracts/contracts/utils/Strings.sol#L3)\n\t- [>=0.6.2<0.8.0](lib/openzeppelin-contracts/contracts/token/ERC721/IERC721.sol#L3)\n\t- [>=0.6.2<0.8.0](lib/openzeppelin-contracts/contracts/token/ERC721/IERC721Enumerable.sol#L3)\n\t- [>=0.6.2<0.8.0](lib/openzeppelin-contracts/contracts/token/ERC721/IERC721Metadata.sol#L3)\n\t- [>=0.6.2<0.8.0](lib/openzeppelin-contracts/contracts/utils/Address.sol#L3)\n\t- [^0.7.6](src/PuppyRaffle.sol#L2)\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "lib/base64/base64.sol"
+                },
+                "region": {
+                  "startLine": 3,
+                  "endLine": 3
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "baca3fe23384e45f9bfcab279a579d2c4dc761a434e87b6c0f284cbf75028068"
+          }
+        },
+        {
+          "ruleId": "3-1-dead-code",
+          "message": {
+            "text": "PuppyRaffle._isActivePlayer() (src/PuppyRaffle.sol#185-192) is never used and should be removed\n",
+            "markdown": "[PuppyRaffle._isActivePlayer()](src/PuppyRaffle.sol#L185-L192) is never used and should be removed\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 185,
+                  "endLine": 192
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "311fa6a66ba7ad6889b3569e81b65348a8806f708433bb087d918de7ae28686a"
+          }
+        },
+        {
+          "ruleId": "3-0-solc-version",
+          "message": {
+            "text": "Pragma version^0.7.6 (src/PuppyRaffle.sol#2) allows old versions\n",
+            "markdown": "Pragma version[^0.7.6](src/PuppyRaffle.sol#L2) allows old versions\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 2,
+                  "endLine": 2
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "f340b7dab59957ca9553e8411fe4b2b8c94c386815e5e093163ba46158663031"
+          }
+        },
+        {
+          "ruleId": "3-0-low-level-calls",
+          "message": {
+            "text": "Low level call in PuppyRaffle.withdrawFees() (src/PuppyRaffle.sol#165-171):\n\t- (success) = feeAddress.call{value: feesToWithdraw}() (src/PuppyRaffle.sol#169)\n",
+            "markdown": "Low level call in [PuppyRaffle.withdrawFees()](src/PuppyRaffle.sol#L165-L171):\n\t- [(success) = feeAddress.call{value: feesToWithdraw}()](src/PuppyRaffle.sol#L169)\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 165,
+                  "endLine": 171
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "595550e81edf36ab1ced213042d45fd2430a95f4b27a99bf6b8e40abd9245cc9"
+          }
+        },
+        {
+          "ruleId": "3-0-low-level-calls",
+          "message": {
+            "text": "Low level call in PuppyRaffle.selectWinner() (src/PuppyRaffle.sol#133-162):\n\t- (success) = winner.call{value: prizePool}() (src/PuppyRaffle.sol#159)\n",
+            "markdown": "Low level call in [PuppyRaffle.selectWinner()](src/PuppyRaffle.sol#L133-L162):\n\t- [(success) = winner.call{value: prizePool}()](src/PuppyRaffle.sol#L159)\n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 133,
+                  "endLine": 162
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "aac38b4088484a4b92d9c66f6378c48e533765c4f3dfbd4fde766bcef9225043"
+          }
+        },
+        {
+          "ruleId": "4-0-cache-array-length",
+          "message": {
+            "text": "Loop condition i < players.length (src/PuppyRaffle.sol#238) should use cached array length instead of referencing `length` member of the storage array.\n ",
+            "markdown": "Loop condition [i < players.length](src/PuppyRaffle.sol#L238) should use cached array length instead of referencing `length` member of the storage array.\n "
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 238,
+                  "endLine": 238
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "29fbaebbd5d64d1d019f8461b0e047e03e9ca7e2afa7e6455a150232f019825c"
+          }
+        },
+        {
+          "ruleId": "4-0-cache-array-length",
+          "message": {
+            "text": "Loop condition j < players.length (src/PuppyRaffle.sol#107) should use cached array length instead of referencing `length` member of the storage array.\n ",
+            "markdown": "Loop condition [j < players.length](src/PuppyRaffle.sol#L107) should use cached array length instead of referencing `length` member of the storage array.\n "
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 107,
+                  "endLine": 107
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "6c0094c96f3161ad51455bc150c01ddd2a6d876229f06afb85a36ce0159bcabe"
+          }
+        },
+        {
+          "ruleId": "4-0-cache-array-length",
+          "message": {
+            "text": "Loop condition i < players.length (src/PuppyRaffle.sol#186) should use cached array length instead of referencing `length` member of the storage array.\n ",
+            "markdown": "Loop condition [i < players.length](src/PuppyRaffle.sol#L186) should use cached array length instead of referencing `length` member of the storage array.\n "
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 186,
+                  "endLine": 186
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "71bcaf48d6c1ab2ed44535319d9ecd6f3497a608deb2efbd20429856780055c1"
+          }
+        },
+        {
+          "ruleId": "4-0-constable-states",
+          "message": {
+            "text": "PuppyRaffle.commonImageUri (src/PuppyRaffle.sol#46) should be constant \n",
+            "markdown": "[PuppyRaffle.commonImageUri](src/PuppyRaffle.sol#L46) should be constant \n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 46,
+                  "endLine": 46
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "583b895e738937d173ada979cd09698c9171da1b1bf9a277f4de10fd1fba5798"
+          }
+        },
+        {
+          "ruleId": "4-0-constable-states",
+          "message": {
+            "text": "PuppyRaffle.legendaryImageUri (src/PuppyRaffle.sol#56) should be constant \n",
+            "markdown": "[PuppyRaffle.legendaryImageUri](src/PuppyRaffle.sol#L56) should be constant \n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 56,
+                  "endLine": 56
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "c9a95b33030bb5803885604726bc63ecb53e91b4309d92aa5e22c76f82176684"
+          }
+        },
+        {
+          "ruleId": "4-0-constable-states",
+          "message": {
+            "text": "PuppyRaffle.rareImageUri (src/PuppyRaffle.sol#51) should be constant \n",
+            "markdown": "[PuppyRaffle.rareImageUri](src/PuppyRaffle.sol#L51) should be constant \n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 51,
+                  "endLine": 51
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "f1fc6b30db9cd57b33f9a62059d50a4d7f5cc49aa1c136817086767b6ca9b548"
+          }
+        },
+        {
+          "ruleId": "4-0-immutable-states",
+          "message": {
+            "text": "PuppyRaffle.raffleDuration (src/PuppyRaffle.sol#32) should be immutable \n",
+            "markdown": "[PuppyRaffle.raffleDuration](src/PuppyRaffle.sol#L32) should be immutable \n"
+          },
+          "level": "warning",
+          "locations": [
+            {
+              "physicalLocation": {
+                "artifactLocation": {
+                  "uri": "src/PuppyRaffle.sol"
+                },
+                "region": {
+                  "startLine": 32,
+                  "endLine": 32
+                }
+              }
+            }
+          ],
+          "partialFingerprints": {
+            "id": "2ae749432aeb6928e3650cf4190df23b3ff889b4b31fdc3eeccd8ecc43b5f167"
+          }
+        }
+      ]
+    }
+  ]
+}
