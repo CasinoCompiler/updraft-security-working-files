@@ -15,7 +15,7 @@ contract PuppyRaffleTest is Test {
     Frontrun frontrun;
     FrontrunHelper frontrunHelper;
 
-    uint256 entranceFee = 1e18;
+    uint256 entranceFee = 30e18;
     address playerOne = address(1);
     address playerTwo = address(2);
     address playerThree = address(3);
@@ -383,6 +383,40 @@ contract PuppyRaffleTest is Test {
     /*//////////////////////////////////////////////////////////////
                                 OVERFLOW
     //////////////////////////////////////////////////////////////*/
+    // Entrance fee has been set to 30 ether
+    // Fees updated when winner is selected
+
+    function test_Overflow() public {
+
+        // Give the entrance fee * 4 to enter for all players
+        vm.deal(one, entranceFee * 4);
+
+        // ARGS for entering enterRaffle()
+        address[] memory playersARG = new address[](4);
+        playersARG[0] = one;
+        playersARG[1] = two;
+        playersARG[2] = three;
+        playersARG[3] = four;
+
+        // one enters raffle for everyone
+        vm.prank(one);
+        puppyRaffle.enterRaffle{value: entranceFee * 4}(playersARG);
+
+        // Warp to when selectWinner() can be called
+        vm.warp(block.timestamp + duration + 1);
+        vm.roll(block.number + 1);
+
+        // Select winner so totalFees can be updated.
+        console.log("totalFees before: ");
+        console.logUint(puppyRaffle.totalFees());
+        uint256 expectedTotalFees = ((entranceFee * 4) * 20 ) / 100;
+        console.log("expectedTotalFeed: ", expectedTotalFees);    
+        puppyRaffle.selectWinner();
+        console.log("totalFees after: ");
+        console.logUint(puppyRaffle.totalFees());
+
+        assertFalse(puppyRaffle.totalFees() == expectedTotalFees);
+    }
     
 
     /*//////////////////////////////////////////////////////////////
