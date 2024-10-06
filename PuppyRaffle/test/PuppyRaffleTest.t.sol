@@ -6,11 +6,14 @@ import {Test, console} from "lib/forge-std/src/Test.sol";
 import {PuppyRaffle} from "../src/PuppyRaffle.sol";
 import {Attack} from "../src/ReentrencyAttack.sol";
 import {SelfDestruct} from "../src/SelfDestruct.sol";
+import {Frontrun, FrontrunHelper} from "../src/Frontrun.sol";
 
 contract PuppyRaffleTest is Test {
     PuppyRaffle puppyRaffle;
     Attack attack;
     SelfDestruct selfDestruct;
+    Frontrun frontrun;
+    FrontrunHelper frontrunHelper;
 
     uint256 entranceFee = 1e18;
     address playerOne = address(1);
@@ -29,6 +32,8 @@ contract PuppyRaffleTest is Test {
 
         attack = new Attack(address(puppyRaffle));
         selfDestruct = new SelfDestruct(address(puppyRaffle));
+        frontrunHelper = new FrontrunHelper(address(puppyRaffle));
+        frontrun = new Frontrun(address(frontrunHelper));
     }
 
     //////////////////////
@@ -268,7 +273,6 @@ contract PuppyRaffleTest is Test {
         vm.prank(charlie);
         vm.expectRevert();
         puppyRaffle.enterRaffle{value: entranceFee * 2}(charlieARG);
-   
     }
 
     /*//////////////////////////////////////////////////////////////
@@ -379,5 +383,46 @@ contract PuppyRaffleTest is Test {
     /*//////////////////////////////////////////////////////////////
                                 OVERFLOW
     //////////////////////////////////////////////////////////////*/
+    
+
+    /*//////////////////////////////////////////////////////////////
+                                FRONTRUN
+    //////////////////////////////////////////////////////////////*/
+    address selectWinnerCaller = makeAddr("selectWinnerCaller");
+
+    function test_Frontrun() public {
+
+        // Give the entrance fee * 4 to enter for all players
+        vm.deal(one, entranceFee * 4);
+
+        // Supply Advisory, Frontrun & frontrun helper with Eth
+        vm.deal(address(frontrunHelper), 10 ether);
+        vm.deal(address(frontrun), 10 ether);
+        vm.deal(advisory, 10 ether); 
+
+        // ARGS for entering enterRaffle()
+        address[] memory playersARG = new address[](4);
+        playersARG[0] = one;
+        playersARG[1] = two;
+        playersARG[2] = three;
+        playersARG[3] = four;
+
+        // one enters raffle for everyone
+        vm.prank(one);
+        puppyRaffle.enterRaffle{value: entranceFee * 4}(playersARG);
+
+        // BadActor enters raffle
+        vm.prank(advisory);
+        frontrunHelper.enter{value: entranceFee}();
+
+        // Warp to when selectWinner() can be called
+        vm.warp(block.timestamp + duration + 1);
+        vm.roll(block.number + 1);
+
+        // Simulate frontrun
+        vm.startPrank(selectWinnerCaller);
+        frontrun.attack(selectWinnerCaller);
+        puppyRaffle.selectWinner();
+    }
 
 }
