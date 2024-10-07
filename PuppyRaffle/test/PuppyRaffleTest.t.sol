@@ -459,4 +459,69 @@ contract PuppyRaffleTest is Test {
         puppyRaffle.selectWinner();
     }
 
+    /*//////////////////////////////////////////////////////////////
+                           DENIAL OF SERVICE
+    //////////////////////////////////////////////////////////////*/
+
+    function test_DenialOfService() public {
+        // Give the entrance fee to one to see how much gas it would be to enter 1 player
+        vm.deal(one, entranceFee);
+        // ARGS for entering enterRaffle()
+        address[] memory playeroneARG = new address[](1);
+        playeroneARG[0] = one;
+
+        // must initialise players[] so second player will be true indicator of gas
+        vm.deal(two, entranceFee);
+        // ARGS for entering enterRaffle()
+        address[] memory playertwoARG = new address[](1);
+        playertwoARG[0] = two;
+
+        //  txn gas to begin with
+        uint256 startGas = gasleft();
+        console.log("Start gas: ", startGas);
+
+        // one enters raffle
+        vm.prank(one);
+        puppyRaffle.enterRaffle{value: entranceFee}(playeroneARG);
+        // Find the cost of cast
+        uint256 gasAfterOne = startGas - gasleft();
+        console.log("Gas used for One: ", (gasAfterOne));
+
+        // two enters raffle
+        vm.prank(two);
+        puppyRaffle.enterRaffle{value: entranceFee}(playertwoARG);
+        // Find the cost of cast
+        uint256 gasAfterTwo = startGas - gasleft();
+        console.log("Gas used for two: ", (gasAfterTwo));
+
+        // For loop to enter many players
+        uint256 manyPlayersMax = 1000;
+        address[] memory manyplayersarg = new address[](manyPlayersMax);
+        for (uint256 i =0; i < manyPlayersMax; i++) {
+            string memory addressArg = string(abi.encode(i));
+            address manyPlayer = makeAddr(addressArg);
+            manyplayersarg[i] = manyPlayer;
+        }
+
+        // Deal one eth to enter many players
+        vm.deal(one, entranceFee * manyPlayersMax);
+        puppyRaffle.enterRaffle{value: entranceFee * manyPlayersMax}(manyplayersarg);
+        // Find the cost of cast
+        uint256 gasAfterManyPlayers = startGas - gasleft();
+        console.log("Gas used for Many Players: ", (gasAfterManyPlayers));
+
+        // enter with 3rd player and see how much gas cost is now
+        vm.deal(three, entranceFee);
+        // ARGS for entering enterRaffle()
+        address[] memory playerthreeARG = new address[](1);
+        playerthreeARG[0] = three;
+
+        // one enters raffle
+        vm.prank(three);
+        puppyRaffle.enterRaffle{value: entranceFee}(playerthreeARG);
+        // Find the cost of cast
+        uint256 gasAfterThree = startGas - gasleft();
+        console.log("Gas used for Three: ", (gasAfterThree));
+    }    
+
 }
