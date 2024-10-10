@@ -1,6 +1,0 @@
-[submodule "t-swap/lib/forge-std"]
-	path = t-swap/lib/forge-std
-	url = https://github.com/foundry-rs/forge-std
-[submodule "t-swap/lib/openzeppelin-contracts"]
-	path = t-swap/lib/openzeppelin-contracts
-	url = https://github.com/openzeppelin/openzeppelin-contracts
