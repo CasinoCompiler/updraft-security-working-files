@@ -1,3 +1,9 @@
 /cache
 /out
 /lib
+/audit
+
+.env
+*.txt
+*.py
+*.json
