@@ -163,5 +163,15 @@ contract TSwapPoolTest is Test {
 
     function test_High_4() public provideInitialLiquidity {
 
+        // 250_752_256_770_310_932_798
+        vm.startPrank(liquidityProvider);
+        weth.approve(address(pool), type(uint256).max);
+        poolToken.approve(address(pool), type(uint256).max);
+        uint256 wethAmount = pool.sellPoolTokens(20e18);
+
+        console.log(wethAmount);
+
+        vm.stopPrank();
+
     }
 }
