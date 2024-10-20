@@ -177,7 +177,7 @@ contract ThunderLoan is Initializable, OwnableUpgradeable, UUPSUpgradeable, Orac
         assetToken.burn(msg.sender, amountOfAssetToken);
         assetToken.transferUnderlyingTo(msg.sender, amountUnderlying);
     }
-
+    // @followup :: possible reentrency
     function flashloan(
         address receiverAddress,
         IERC20 token,
@@ -208,6 +208,8 @@ contract ThunderLoan is Initializable, OwnableUpgradeable, UUPSUpgradeable, Orac
         s_currentlyFlashLoaning[token] = true;
         assetToken.transferUnderlyingTo(receiverAddress, amount);
         // slither-disable-next-line unused-return reentrancy-vulnerabilities-2
+        // @followup :: possible reentrency
+        // @followup, is return needed?
         receiverAddress.functionCall(
             abi.encodeCall(
                 IFlashLoanReceiver.executeOperation,

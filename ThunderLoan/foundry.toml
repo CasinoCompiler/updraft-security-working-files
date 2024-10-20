@@ -8,6 +8,14 @@ remappings = [
 ]
 solc = '0.8.20'
 
+[fuzz]
+runs = 100
+depth = 10
+seed = '0x1'
+
+[invariant]
+fail_on_revert = false
+
 [fmt]
 bracket_spacing = true
 int_types = "long"

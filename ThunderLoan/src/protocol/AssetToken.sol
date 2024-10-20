@@ -16,6 +16,7 @@ contract AssetToken is ERC20 {
                             STATE VARIABLES
     //////////////////////////////////////////////////////////////*/
     IERC20 private immutable i_underlying;
+    // @audit :: What if address changes (Upgradeable contracts)
     address private immutable i_thunderLoan;
 
     // The underlying per asset exchange rate
@@ -88,9 +89,9 @@ contract AssetToken is ERC20 {
         // newExchangeRate = 1.125
         uint256 newExchangeRate = s_exchangeRate * (totalSupply() + fee) / totalSupply();
 
-        if (newExchangeRate <= s_exchangeRate) {
-            revert AssetToken__ExhangeRateCanOnlyIncrease(s_exchangeRate, newExchangeRate);
-        }
+        // if (newExchangeRate <= s_exchangeRate) {
+        //     revert AssetToken__ExhangeRateCanOnlyIncrease(s_exchangeRate, newExchangeRate);
+        // }
         s_exchangeRate = newExchangeRate;
         emit ExchangeRateUpdated(s_exchangeRate);
     }
