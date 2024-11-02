@@ -16,7 +16,6 @@ contract AssetToken is ERC20 {
                             STATE VARIABLES
     //////////////////////////////////////////////////////////////*/
     IERC20 private immutable i_underlying;
-    // @audit :: What if address changes (Upgradeable contracts)
     address private immutable i_thunderLoan;
 
     // The underlying per asset exchange rate
@@ -78,7 +77,6 @@ contract AssetToken is ERC20 {
         i_underlying.safeTransfer(to, amount);
     }
 
-    // @audit - gas :: too many storage reads for s_exchangeRate => load it into memory
     function updateExchangeRate(uint256 fee) external onlyThunderLoan {
         // 1. Get the current exchange rate
         // 2. How big the fee is should be divided by the total supply
@@ -88,8 +86,6 @@ contract AssetToken is ERC20 {
         // newExchangeRate = oldExchangeRate * (totalSupply + fee) / totalSupply
         // newExchangeRate = 1 (4 + 0.5) / 4
         // newExchangeRate = 1.125
-        // @audit why is the fee being considered for the exchange rate, shouldn;t the exchange rate just be a function of 
-        // pool size.
         uint256 newExchangeRate = s_exchangeRate * (totalSupply() + fee) / totalSupply();
 
         if (newExchangeRate <= s_exchangeRate) {
