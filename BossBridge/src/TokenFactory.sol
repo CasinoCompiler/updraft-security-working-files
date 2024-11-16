@@ -21,6 +21,7 @@ contract TokenFactory is Ownable {
      * @param contractBytecode The bytecode of the new token
      */
     function deployToken(string memory symbol, bytes memory contractBytecode) public onlyOwner returns (address addr) {
+        // @audit - High :: this won't work on ZKSync
         assembly {
             addr := create(0, add(contractBytecode, 0x20), mload(contractBytecode))
         }

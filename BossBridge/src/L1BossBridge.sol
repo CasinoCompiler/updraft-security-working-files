@@ -55,6 +55,7 @@ contract L1BossBridge is Ownable, Pausable, ReentrancyGuard {
         signers[account] = enabled;
     }
 
+    // @audit - high :: anyone can transfer for any address once approval has been given to contract
     function depositTokensToL2(address from, address l2Recipient, uint256 amount) external whenNotPaused {
         if (token.balanceOf(address(vault)) + amount > DEPOSIT_LIMIT) {
             revert L1BossBridge__DepositLimitReached();
@@ -65,6 +66,7 @@ contract L1BossBridge is Ownable, Pausable, ReentrancyGuard {
         emit Deposit(from, l2Recipient, amount);
     }
 
+    // @audit - high :: signature replay attack
     function withdrawTokensToL1(address to, uint256 amount, uint8 v, bytes32 r, bytes32 s) external {
         sendToL1(
             v,
@@ -91,5 +93,5 @@ contract L1BossBridge is Ownable, Pausable, ReentrancyGuard {
         if (!success) {
             revert L1BossBridge__CallFailed();
         }
-    }
+    } 
 }

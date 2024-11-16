@@ -2,7 +2,7 @@
 pragma solidity 0.8.20;
 
 import { IERC20 } from "@openzeppelin/contracts/interfaces/IERC20.sol";
-import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol";
+import { Ownable } from "@openzeppelin/contracts/access/Ownable.sol"; // Set owner access controls
 
 contract L1Vault is Ownable {
     IERC20 public token;
@@ -11,6 +11,7 @@ contract L1Vault is Ownable {
         token = _token;
     }
 
+    // Approve address to have access to tokens
     function approveTo(address target, uint256 amount) external onlyOwner {
         token.approve(target, amount);
     }
