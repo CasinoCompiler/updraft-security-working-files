@@ -1,11 +1,11 @@
 // SPDX-License-Identifier: AGPL-3.0-only
 pragma solidity ^0.8.3;
 
-import {Base_Test, console2} from "./Base_Test.t.sol";
+import {Base_Test, console} from "./Base_Test.t.sol";
 import {MathMasters} from "src/MathMasters.sol";
 
 contract MathMastersTest is Base_Test {
-    function testMulWad() public {
+    function testMulWad() public pure {
         assertEq(MathMasters.mulWad(2.5e18, 0.5e18), 1.25e18);
         assertEq(MathMasters.mulWad(3e18, 1e18), 3e18);
         assertEq(MathMasters.mulWad(369, 271), 0);
@@ -19,13 +19,13 @@ contract MathMastersTest is Base_Test {
         assert(MathMasters.mulWad(x, y) == (x * y) / 1e18);
     }
 
-    function testMulWadUp() public {
+    function testMulWadUp() public pure {
         assertEq(MathMasters.mulWadUp(2.5e18, 0.5e18), 1.25e18);
         assertEq(MathMasters.mulWadUp(3e18, 1e18), 3e18);
         assertEq(MathMasters.mulWadUp(369, 271), 1);
     }
 
-    function testMulWadUpFuzz(uint256 x, uint256 y) public {
+    function testMulWadUpFuzz(uint256 x, uint256 y) public pure {
         // We want to skip the case where x * y would overflow.
         // Since Solidity 0.8.0 checks for overflows by default,
         // we cannot just multiply x and y as this could revert.
@@ -42,7 +42,7 @@ contract MathMastersTest is Base_Test {
         // depending on whether you want to consider such an overflow case as passing or failing.
     }
 
-    function testSqrt() public {
+    function testSqrt() public pure {
         assertEq(MathMasters.sqrt(0), 0);
         assertEq(MathMasters.sqrt(1), 1);
         assertEq(MathMasters.sqrt(2704), 52);
