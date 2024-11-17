@@ -1,40 +1,17 @@
 // SPDX-License-Identifier: MIT
-// @notice We intentionally want to leave this as floating point so others can use it as a library.
 pragma solidity ^0.8.3;
 
-/// @notice Arithmetic library with operations for fixed-point numbers.
-/// @notice People taking my course: Don't cheat and look at the answers!
-/// @author Math Masters
-/// @author Modified from Solady (https://github.com/vectorized/solady/blob/main/src/utils/FixedPointMathLib.sol)
-/// @author Inspired by Solmate (https://github.com/transmissions11/solmate/blob/main/src/utils/FixedPointMathLib.sol)
-library MathMasters {
-    /*//////////////////////////////////////////////////////////////
-                                 ERRORS
-    //////////////////////////////////////////////////////////////*/
+contract HarnessContract {
+
     error MathMasters__FactorialOverflow();
     error MathMasters__MulWadFailed();
     error MathMasters__DivWadFailed();
     error MathMasters__FullMulDivFailed();
 
-    /*//////////////////////////////////////////////////////////////
-    /*                         CONSTANTS                          */
-    //////////////////////////////////////////////////////////////*/
-    /// @dev The scalar of ETH and most ERC20s.
-    uint256 internal constant WAD = 1e18; // WAD just means 18 decimal places
 
-    // History lesson: WAD, RAY, and RAD were introduced in DappHub/DappTools/the DS test system and popularized by MakerDAO's original DAI system. The names sort of stuck.
-    // https://github.com/dapphub
-    // wad: fixed point decimal with 18 decimals (for basic quantities, e.g. balances)
-    // ray: fixed point decimal with 27 decimals (for precise quantites, e.g. ratios)
-    // rad: fixed point decimal with 45 decimals (result of integer multiplication with a wad and a ray)
+    uint256 internal constant WAD = 1e18;
 
-    /*//////////////////////////////////////////////////////////////
-    /*              SIMPLIFIED FIXED POINT OPERATIONS             */
-    //////////////////////////////////////////////////////////////*/
-
-    /// @dev Equivalent to `(x * y) / WAD` rounded down.
-    // @audit :: informational :: should be called mulWadDown for consistency.
-    function mulWad(uint256 x, uint256 y) internal pure returns (uint256 z) {
+    function mulWad(uint256 x, uint256 y) external pure returns (uint256 z) {
         // @solidity memory-safe-assembly
         assembly {
             // Equivalent to `require(y == 0 || x <= type(uint256).max / y)`.
@@ -51,8 +28,7 @@ library MathMasters {
         }
     }
 
-    /// @dev Equivalent to `(x * y) / WAD` rounded up.
-    function mulWadUp(uint256 x, uint256 y) internal pure returns (uint256 z) {
+    function mulWadUp(uint256 x, uint256 y) external pure returns (uint256 z) {
         /// @solidity memory-safe-assembly
         assembly {
             // Equivalent to `require(y == 0 || x <= type(uint256).max / y)`.
@@ -75,11 +51,6 @@ library MathMasters {
         }
     }
 
-    /*//////////////////////////////////////////////////////////////
-    /*                  GENERAL NUMBER UTILITIES                  */
-    //////////////////////////////////////////////////////////////*/
-
-    /// @dev Returns the square root of `x`.
     function sqrt(uint256 x) internal pure returns (uint256 z) {
         /// @solidity memory-safe-assembly
         assembly {
