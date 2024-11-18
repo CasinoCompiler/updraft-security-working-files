@@ -16,3 +16,9 @@
 [submodule "MathMasters/lib/forge-std"]
 	path = MathMasters/lib/forge-std
 	url = https://github.com/foundry-rs/forge-std
+[submodule "NFTMarketPlace/lib/forge-std"]
+	path = NFTMarketPlace/lib/forge-std
+	url = https://github.com/foundry-rs/forge-std
+[submodule "NFTMarketPlace/lib/openzeppelin-contracts"]
+	path = NFTMarketPlace/lib/openzeppelin-contracts
+	url = https://github.com/openzeppelin/openzeppelin-contracts
